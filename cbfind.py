@@ -57,7 +57,6 @@ CRYPTOBIB_DEFAULT = os.path.join(home_dir, 'cryptobib', 'crypto.bib')
 MAX_RESULTS_DEFAULT = 30
 
 ABBREV_DEFAULT = 'abbrev3.bib'
-OLD_BIBTEX_FIELDS = ['ID', 'title', 'author', 'year', 'note']
 BIBTEX_FIELDS = ['title', 'author', 'year', 'note']
 SEARCHABLE_FIELDS = ['title', 'author', 'year', 'acronyms']
 
@@ -149,44 +148,6 @@ def acronyms_from_ID(id):
         return [initials + year]
     else:
         return [id]
-
-def create_index_old(cryptobib, indexdir):
-    abbrevbib = cryptobib[:-10] + ABBREV_DEFAULT
-    schema = get_schema()
-    idx = index.create_in(indexdir, schema)
-    print('Parsing %s and %s...' % (cryptobib, abbrevbib))
-
-    # Join the contents of abbrevbib and cryptobib into a temporary file
-    with open(abbrevbib) as f1, open(cryptobib) as f2, open('tmp.bib', 'w') as f3:
-        f3.write(f1.read() + '\n' + f2.read())
-
-    with open('tmp.bib') as old_file, open('tmp2.bib', 'w') as new_file:
-        for line in old_file:
-            #line = line.replace('""}', '" "}')
-            #if not '""}' in line:
-            new_file.write(line)
-    with open('tmp2.bib') as cryptobib_file:
-        import bibtexparser
-        cryptobib_db = bibtexparser.load(cryptobib_file)
-    os.remove('tmp.bib')
-
-    writer = idx.writer()
-    temp_bib = bibtexparser.bibdatabase.BibDatabase()
-    print('Generating search index...')
-    for entry in cryptobib_db.entries:
-        temp_bib.entries = [entry]
-        formatted_entry = {}
-        # store original bibtex in case we need it
-        formatted_entry['bibtex'] = bibtexparser.dumps(temp_bib)
-        for key in OLD_BIBTEX_FIELDS:
-            # remove '{}', replace '\n' with ' ' and convert to unicode
-            # also strip out leading '\url' for note field
-            if key in entry:
-                formatted_entry[key] = str(entry[key]).translate({ord(c): v for (c,v) in
-                        [('\n', str(' ')), ('{', None), ('}', None)]}).lstrip('\\url')
-        writer.add_document(**formatted_entry)
-    writer.commit()
-    return idx
 
 class MyFormatter(highlight.Formatter):
     def format_token(self, text, token, replace=False):
