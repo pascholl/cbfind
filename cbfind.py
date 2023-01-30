@@ -3,9 +3,9 @@
 """
 Simple script to index and search cryptobib
 
-Requires whoosh and bibtexparser, which can be installed with:
+Requires whoosh and pybtex, which can be installed with:
 
-$ pip3 install whoosh bibtexparser
+$ pip3 install whoosh pybtex
 """
 
 from whoosh import index
@@ -89,7 +89,6 @@ def create_index(cryptobib, indexdir):
     writer = idx.writer()
     eprint_urls = {}
     formatted_entries = {}
-    #temp_bib = bibtexparser.bibdatabase.BibDatabase()
     logger.info('Generating search index...')
     for (ID, entry) in cryptobib_db.entries.items():
         formatted_entry = {'ID': entry.key}
