@@ -9,7 +9,7 @@ Python 3 and the packages whoosh and pybtex, which can be installed by running i
 
 # Setup
 
-On Linux or MacOS, download a copy of [https://cryptobib.di.ens.fr/](Cryptobib) into your home directory and run
+On Linux or MacOS, download a copy of [Cryptobib](https://cryptobib.di.ens.fr/) into your home directory and run
 
 ```python3 cbfind.py -u```
 
